@@ -2,6 +2,7 @@
 name = "obsidian-backupper"
 version = "0.1.0"
 edition = "2024"
+repository = "https://github.com/yurtitov/obsidian-backupper"
 
 [dependencies]
 anyhow = "1.0.104"
@@ -22,3 +23,8 @@ walkdir = "2.5.0"
 
 [dev-dependencies]
 tempfile = "3.27.0"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"

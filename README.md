@@ -36,6 +36,16 @@ Supported platforms: Linux and macOS.
 
 ## Installation
 
+### Prebuilt binary (Linux and macOS)
+
+```sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/yurtitov/obsidian-backupper/releases/latest/download/obsidian-backupper-installer.sh | sh
+```
+
+The installer detects your OS and CPU architecture (Linux/macOS, x86_64/aarch64), downloads the matching archive from the latest GitHub Release, verifies it and installs `obsidian-backupper` into `~/.cargo/bin`. Make sure that directory is in your `PATH`. You still need `gpg` and `git` installed.
+
+### From source
+
 ```sh
 git clone <this repository>
 cd obsidian-backupper
@@ -43,6 +53,17 @@ cargo install --path .
 ```
 
 This installs the `obsidian-backupper` binary into `~/.cargo/bin`.
+
+### Publishing a release (maintainers)
+
+Releases are built by [cargo-dist](https://github.com/axodotdev/cargo-dist) via `.github/workflows/release.yml`. Bump `version` in `Cargo.toml`, commit, then push a matching tag:
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The workflow builds all targets, creates the GitHub Release and uploads the archives, checksums and the installer script. After changing `dist-workspace.toml`, regenerate the workflow with `dist generate`.
 
 ## Quick start
 
