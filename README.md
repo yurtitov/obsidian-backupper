@@ -265,6 +265,20 @@ obsidian-backupper restore --target ~/Restored
 
 You can also decrypt a single file without this tool: `gpg --decrypt vault/Notes/Daily.md.gpg > Daily.md`.
 
+### Restoring with a YubiKey (touch policy)
+
+Every file is encrypted separately, so `restore` performs one decryption on the card per file. If the decryption key has the touch policy `on`, you must touch the YubiKey for every single file. To avoid this, set the touch policy of the decryption key to `cached`:
+
+```bash
+ykman openpgp keys set-touch dec cached
+```
+
+A single touch is then accepted for 15 seconds, so a restore of many small notes needs only a few touches. Notes:
+
+- If the restore runs longer than 15 seconds, you will be asked to touch again once the window expires.
+- While the cache is active, any process that can reach your `gpg-agent` can decrypt without a new touch. Set the policy back with `ykman openpgp keys set-touch dec on` after restoring if you want per-operation confirmation again.
+- `cached` requires a YubiKey 4 or 5; check the current policy with `ykman openpgp info`.
+
 ## Scheduling
 
 The command is non-interactive as long as `gpg-agent` has your passphrase cached or the key has no passphrase, and SSH credentials are available without prompting.
@@ -303,6 +317,7 @@ Other points:
 | Push is rejected or asks for credentials | Load your SSH key into `ssh-agent`, and verify with `obsidian-backupper check`. |
 | `git remote 'origin' is X, which differs from configured Y` (warning) | `origin` already exists in `target_dir` with another URL. The existing remote is kept; fix with `git remote set-url origin <url>`. |
 | `refusing to overwrite existing file ... (use --force)` | A local file differs from the backup. Restore into an empty `--target`, or pass `--force`. |
+| `restore` asks to touch the YubiKey for every file | The touch policy of the decryption key is `on`. See [Restoring with a YubiKey](#restoring-with-a-yubikey-touch-policy). |
 | Decryption in cron fails | `gpg-agent` has no cached passphrase and no terminal. Use a cached passphrase or a dedicated key without one. |
 
 ## Development
